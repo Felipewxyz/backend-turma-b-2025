@@ -9,6 +9,7 @@ const PaymentySchema = z.object({
 
 const PaymentyController = {
     async createPayment(req,res){
+
         try {
             const {data, recibo, valor, observacao} = req.body;
             PaymentySchema.parse({data, recibo, valor, observacao});
@@ -18,6 +19,29 @@ const PaymentyController = {
                 return res.status (400).json({message: "Validation error", details: error.errors});
             }
 
+            return res.status(500).json({message: 'Internal server error'});
+        }
+    },
+
+    async updatePayment(req, res){
+        const {id} = req.params;
+        try {
+            const {data, recibo, valor, observacao} = req.body;
+            PaymentySchema.parse({data, recibo, valor, observacao});
+            return res.status(200).json({message: 'Payment update', data: {data, recibo, valor, observacao}});
+        } catch (error) {
+            if (error instanceof z.ZodError) {
+                return res.status (400).json({message: "Validation error", details: error.errors});
+            }
+            return res.status(500).json({message: 'Internal server error'});
+        }
+    },
+
+    async deletePayment(req,res){
+        try {
+            const {id} = req.params;
+            return res.status(200).json({message: 'Payment delete', id});
+        } catch (error) {
             return res.status(500).json({message: 'Internal server error'});
         }
     }
